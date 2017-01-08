@@ -1,0 +1,43 @@
+We decided to make a small tutorial file which will show users of this repository how to compile OpenCV 3.2 from source on their Windows Machines. Note that this tutorial covers the installation of the library along with the opencv-contrib package which is necessary for this project in particular. What this does not cover however is the installation of the CUDA extensions to the OpenCV library because at the time of writing this document there exist some errors in the compilation of the same. This installation is limited to only those users who wish to use this library in Visual Studio 2015 to develop C++ programs and hence will not be covering the installation in python environments.
+
+The following are the requirements:
+1. Visual Studio 2015 must be installed with all the C++ tools that come along with it. If you don't know what this is then simple go to File->New->Project and create a New C++ Project. If you do not have C++ tools installed in your system then you will be prompted to install the same on the creation page.
+2. Latest version of CMake
+3. [Optional] Git command line tool
+
+Instructions are as follows:
+1. For the sake of clarity we will create our working directory. So go ahead and do it.
+2. Once inside this directory, shift + right-click to and select the option which says "Open Command Window here".
+3. Now that you have started a command prompt in your current working directory, clone the git repository by entering the command:
+	git clone https://github.com/opencv/opencv.git
+We also need the contrib packages so clone them too:
+	git clone https://github.com/opencv/opencv_contrib.git
+
+These commands will create two new folders called 'opencv' and 'opencv-contrib' in your working directory. These directories essentially store all the source code which we will use to build OpenCV from source.
+Alternatively, if you don't want to use github for some reason, the .zip folders can be downloaded directly on to your computer. Once you have done this extract the contents into your working folder. NOTE: Do not try to create new folders or anything if you are knew to this and do not know what you are doing. If you do so the tutorial will differ from what you might see on your computer. Also when you extract opencv-master.zip you will get a folder named opencv-master which you can rename to opencv for the sake of uniformity with this tutorial. Same thing goes for the opencv-contrib-master.zip.
+
+4. Okay now create a directory called build inside your opencv directory.(NOT THE opencv-contrib DIRECTORY).
+5. Open up Cmake and set the field 'Where is the source code:' to the opencv directory you just cloned/extracted.
+6. Set the field 'Where to build the binaries:' to the build directory you created inside the opencv directory.
+7. Click on Configure.
+8. Select your version of Visual Studio. For me it was Visual Studio 14 2015 Win64 because I had Visual Studio 2015 on x64 architecture.
+Note: 
+a. For me Cmake couldn't find the C and C++ compilers in my system. It showed up as an error in the CMake Console. To resolve this, in addition to the step above select the radio button which says 'Specify native compilers'. It will ask you to give the path for your C and C++ compilers. For me the paths were:
+i) C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe
+ii) C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/cl.exe (Yes, both are the same.)
+9. Now there should be a bunch of red crap on your screen. These are basically all the configuration you wish to compile your OpenCV with. Don't mess with this unless you really know what you are doing.
+10. Scroll down to an option called OPENCV_EXTRA_MODULES_PATH and set this to 'your_working_directory/opencv_contrib/modules'
+11. Check the OPENCV_ENABLE_NONFREE variable.
+12. Make sure WITH_CUDA is not checked.
+13. Click on configure again.
+14. This time you will see another bunch of red crap on your screen. Just hit configure again and all red crap should be gone. At this point in your build folder a Visual Studio 2015 Project should have been created. Open this project using the .sln file and open up the Solution Explorer.
+15. Under the heading 'CMakeTargets' there will be a heading call 'ALL_BUILD'. Make sure your Visual Studio is set to 'Debug' mode and the appropriate architecture. Right click and click on build. Do the same thing for 'Release' configuration.
+16. Now your binaries have been built. We need to sort them all into a single directory.
+17. For this we need to build the 'INSTALL' option. Again run this for both 'Debug' and 'Release' modes.
+18. Now all your binaries of OpenCV directory have been moved into a directory called 'install' in your 'build' directory.
+19. So the next step is to configure your C++ project in Visual Studio 2015 to be able to use these compiled binaries. 
+20. Open up your project properties in Visual Studio and click on VC++ directories. Under the Include directories add the path '\your_working_directory\opencv\build\install\include'. Under the Library Directories add the path '\your_working_directory\opencv\build\install\x64\vc14\lib'
+21. Finally go to the Linker category and click on Input. Here under Additional dependencies add the names of all the .lib files along with their extensions in your '\your_working_directory\opencv\build\install\x64\vc14\lib' directory.
+22. When you run your code it might say that some .dll files are missing from your computer. There are two ways to fix this:
+	a. Simply copy those .dlls from the folder '\your_working_directory\opencv\build\install\x64\vc14\bin' into the folder which contains your source file.
+	b. Or you can add '\your_working_directory\opencv\build\install\x64\vc14\bin' to your system variable called PATH. (For me this approach also did not work for some reason. So I tried adding it to the user path instead of the system path and it fixed the issue.)
